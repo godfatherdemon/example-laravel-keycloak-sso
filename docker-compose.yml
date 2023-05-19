@@ -1,0 +1,57 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:17.0
+    ports:
+      - 8080:8080
+    command: start-dev
+    volumes:
+      - .:/app
+    # env_file:
+    #   - .env_base
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=password123#@!
+      - KEYCLOAK_BASE_URL=http://172.17.0.1:8080
+      #- KC_HTTP_RELATIVE_PATH=/auth
+
+  web_bkd:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    env_file:
+      - .env_base
+    environment:
+      - APP_NAME="Aplikasi BKD"
+      - STYLE_COLOR=purple
+      - APP_URL=http://172.17.0.1:8000
+      - KEYCLOAK_CLIENT_ID=test_client_bkd
+
+  web_diknas:
+    build:
+      context: .
+    ports:
+      - 8001:8001
+    env_file:
+      - .env_base
+    environment:
+      - PORT=8001
+      - APP_NAME="Aplikasi Diknas"
+      - STYLE_COLOR=blue
+      - APP_URL=http://172.17.0.1:8001
+      - KEYCLOAK_CLIENT_ID=test_client_diknas
+
+  web_siap:
+    build:
+      context: .
+    ports:
+      - 8010:8010
+    env_file:
+      - .env_base
+    environment:
+      - IS_SIAP=true
+      # list of admin NIKs, separated by commas
+      - ADMIN_NIK=123456789012
+      - PORT=8010
+      - APP_URL=http://172.17.0.1:8010
+      - KEYCLOAK_CLIENT_ID=test_client_siap
